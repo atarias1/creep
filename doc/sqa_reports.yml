@@ -1,0 +1,6 @@
+Applications:
+    creep:
+        app_types:
+            - CreepApp
+        content_directory: ${ROOT_DIR}/doc/content
+        log_default: WARNING
