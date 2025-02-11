@@ -12,7 +12,7 @@ ViscousStress2D::validParams()
   params.addRequiredParam<unsigned int>("component", "Velocity component.");
   params.addRequiredCoupledVar("V_x_s", "x velocity");
   params.addRequiredCoupledVar("V_y_s", "y velocity");
-  params.addRequiredCoupledVar("P_tot", "Total pressure");
+  // params.addRequiredCoupledVar("P_tot", "Total pressure");
 
   return params;
 }
@@ -26,7 +26,7 @@ ViscousStress2D::ViscousStress2D(const InputParameters & parameters)
     // Coupled
     _V_x_s(adCoupledValue("V_x_s")),
     _V_y_s(adCoupledValue("V_y_s")),
-    _P_tot(adCoupledValue("P_tot")),
+    // _P_tot(adCoupledValue("P_tot")),
 
     _grad_V_x_s(adCoupledGradient("V_x_s")),
     _grad_V_y_s(adCoupledGradient("V_y_s")),
@@ -44,32 +44,31 @@ ViscousStress2D::computeQpResidual()
 
   ADReal res;
 
-  // Velocity gradient components
-  const ADReal dvx_dx = _grad_V_x_s[_qp](0);
-  const ADReal dvx_dy = _grad_V_x_s[_qp](1);
-  const ADReal dvy_dx = _grad_V_y_s[_qp](0);
-  const ADReal dvy_dy = _grad_V_y_s[_qp](1);
+  // // Velocity gradient components
+  // const ADReal dvx_dx = _grad_V_x_s[_qp](0);
+  // const ADReal dvx_dy = _grad_V_x_s[_qp](1);
+  // const ADReal dvy_dx = _grad_V_y_s[_qp](0);
+  // const ADReal dvy_dy = _grad_V_y_s[_qp](1);
 
-  // const ADReal div_v = dvx_dx + dvy_dy;
+  // // const ADReal div_v = dvx_dx + dvy_dy;
 
-  // stress components
+  // // stress components
 
-  const ADReal sigma_xx = -_P_tot[_qp] + 2.0 * _eta_s[_qp] * (dvx_dx);
-  // div_v = 0, so - div_v / 3.0 removed
-  const ADReal sigma_yy = -_P_tot[_qp] + 2.0 * _eta_s[_qp] * (dvy_dy);
-
-  // symmetric shear
-  const ADReal sigma_xy = 2.0 * _eta_s[_qp] * (0.5 * (dvx_dy + dvy_dx));
+  // const ADReal sigma_xx = (dvx_dx); // removed - _P_tot[_qp] from front
+  // // div_v = 0, so - div_v / 3.0 removed
+  // const ADReal sigma_yy = (dvy_dy); // removed - _P_tot[_qp] from front
 
   // Residual
   if (_component == 0)
   {
-    res = -(_grad_test[_i][_qp](0) * sigma_xx + _grad_test[_i][_qp](1) * sigma_xy);
+    res = -1 * ((_grad_test[_i][_qp](0) * (2.0 * _eta_s[_qp] * _grad_u[_qp](0))) +
+                (_grad_test[_i][_qp](1) * (_eta_s[_qp] * (_grad_u[_qp](1) + _grad_V_y_s[_qp](0)))));
   }
 
   else if (_component == 1)
   {
-    res = -(_grad_test[_i][_qp](0) * sigma_xy + _grad_test[_i][_qp](1) * sigma_yy);
+    res = -1 * ((_grad_test[_i][_qp](0) * (_eta_s[_qp] * (_grad_u[_qp](0) + _grad_V_x_s[_qp](1)))) +
+                (_grad_test[_i][_qp](1) * (2.0 * _eta_s[_qp] * _grad_u[_qp](1))));
   }
 
   return res;

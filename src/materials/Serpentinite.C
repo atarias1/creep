@@ -21,5 +21,5 @@ Serpentinite::Serpentinite(const InputParameters & parameters)
 void
 Serpentinite::computeQpProperties()
 {
-  _eta_s[_qp] = 1.0;
+  _eta_s[_qp] = 1e17;
 }

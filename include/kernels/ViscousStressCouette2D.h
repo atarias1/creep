@@ -3,10 +3,10 @@
 
 #include "ADKernel.h"
 
-class ViscousStress2D : public ADKernel
+class ViscousStressCouette2D : public ADKernel
 {
 public:
-  ViscousStress2D(const InputParameters & parameters);
+  ViscousStressCouette2D(const InputParameters & parameters);
 
   static InputParameters validParams();
 
