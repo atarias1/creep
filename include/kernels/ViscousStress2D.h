@@ -18,12 +18,11 @@ private:
 
   const ADVariableValue & _V_x_s;
   const ADVariableValue & _V_y_s;
-  // const ADVariableValue & _P_tot;
+  const ADVariableValue & _P_tot;
 
   const ADVariableGradient & _grad_V_x_s;
   const ADVariableGradient & _grad_V_y_s;
-
-  // const ADVariableValue & _P_tot;
+  const ADVariableGradient & _grad_P_tot;
 
   const ADMaterialProperty<Real> & _eta_s; // consumed property needs const
 };

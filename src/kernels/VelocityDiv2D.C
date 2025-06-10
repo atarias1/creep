@@ -19,6 +19,5 @@ VelocityDiv2D::VelocityDiv2D(const InputParameters & parameters)
 ADReal
 VelocityDiv2D::computeQpResidual()
 {
-  ADRealVectorValue V_s = (_V_x_s[_qp], _V_y_s[_qp]);
-  return -_grad_test[_i][_qp] * V_s;
+  return -(_grad_test[_i][_qp](0) * _V_x_s[_qp] + _grad_test[_i][_qp](1) * _V_y_s[_qp]);
 }
