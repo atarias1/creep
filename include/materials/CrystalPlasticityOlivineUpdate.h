@@ -28,6 +28,9 @@ protected:
    */
   virtual void initQpStatefulProperties() override;
 
+  // We need to override to account for different slip system types
+  virtual void setMaterialVectorSize() override;
+
   /**
    * Sets the value of the current and previous substep iteration slip system
    * resistance to the old value at the start of the PK2 stress convergence
@@ -83,7 +86,7 @@ protected:
     slip system
   */
 
-  void calculateDislocationDensity();
+  bool calculateDislocationDensity();
 
   /*
     Calculates the sum of all slip system dislocations and uses it to determing the
@@ -103,8 +106,9 @@ protected:
 
   // Dislocation densities
   MaterialProperty<std::vector<Real>> & _dislocation_density;
-  const MaterialProperty<std::vector<Real>> & dislocation_density_old;
-  MaterialProperty<std::vector<Real>> & dislocation_increment;
+  const MaterialProperty<std::vector<Real>> & _dislocation_density_old;
+  MaterialProperty<std::vector<Real>> & _dislocation_increment;
+  MaterialProperty<std::vector<Real>> & _dislocations_removed_increment;
   const Real _initial_dislocation_density;
 
   // Slip systems -- I think here we just care about the burgers vector
@@ -121,7 +125,7 @@ protected:
   const Real _rate_sensitivity_exponent;
 
   // Parameters for determining slip resistence
-  const std::vector<Real> _burgers_vector;
+  const std::vector<Real> _burgers_vectors;
   const Real _taylor_coefficient;
   const Real _shear_modulus;
 
@@ -132,5 +136,10 @@ protected:
   ///@{Stores the slip system resistance, dislocation densities from the previous substep
   std::vector<Real> _previous_substep_slip_resistance;
   std::vector<Real> _previous_substep_dislocation_density;
+  ///@}
+
+  ///@{ Caching current slip resistance, dislocation density values before final update
+  std::vector<Real> _slip_resistance_before_update;
+  std::vector<Real> _dislocations_before_update;
   ///@}
 };
